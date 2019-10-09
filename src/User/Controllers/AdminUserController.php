@@ -9,9 +9,12 @@ use AvoRed\Framework\User\Requests\AdminUserRequest;
 use AvoRed\Framework\User\Requests\AdminUserImageRequest;
 use AvoRed\Framework\Database\Contracts\RoleModelInterface;
 use AvoRed\Framework\Database\Contracts\AdminUserModelInterface;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class AdminUserController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * AdminUser Repository.
      * @var \AvoRed\Framework\Database\Repository\AdminUserRepository
@@ -43,6 +46,8 @@ class AdminUserController extends Controller
      */
     public function index()
     {
+        $this->authorize('admin-admin-user-list');
+
         $adminUsers = $this->adminUserRepository->all();
 
         return view('avored::user.admin-user.index')
