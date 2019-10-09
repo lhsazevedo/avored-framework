@@ -2,6 +2,8 @@
 
 namespace AvoRed\Framework;
 
+use AvoRed\Framework\Database\Models\AdminUser;
+use AvoRed\Framework\Permission\Manager;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -11,6 +13,7 @@ use AvoRed\Framework\Support\Console\InstallCommand;
 use AvoRed\Framework\Support\Console\AdminMakeCommand;
 use AvoRed\Framework\System\ViewComposers\LayoutComposer;
 use AvoRed\Framework\Support\Middleware\RedirectIfAdminAuth;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 class AvoRedProvider extends ServiceProvider
 {
@@ -52,10 +55,16 @@ class AvoRedProvider extends ServiceProvider
      * Bootstrap services.
      * @return void
      */
-    public function boot()
+    public function boot(GateContract $gate)
     {
         $this->registerTranslationPath();
         $this->setupPublishFiles();
+
+        $gate->before(function (AdminUser $user, $ability) {
+            if ($user->is_super_admin or $user->hasPermission($ability)) {
+                return true;
+            }
+        });
     }
 
     /**
