@@ -60,6 +60,8 @@ class AdminUserController extends Controller
      */
     public function create()
     {
+        $this->authorize('admin-admin-user-create');
+
         $tabs = Tab::get('user.admin-user');
         $roleOptions = $this->roleRepository->options();
 
@@ -74,6 +76,8 @@ class AdminUserController extends Controller
      */
     public function store(AdminUserRequest $request)
     {
+        $this->authorize('admin-admin-user-create');
+
         $request->merge(['password' => bcrypt($request->password)]);
 
         $this->adminUserRepository->create($request->all());
@@ -89,6 +93,8 @@ class AdminUserController extends Controller
      */
     public function edit(AdminUser $adminUser)
     {
+        $this->authorize('admin-admin-user-update');
+
         $tabs = Tab::get('user.admin-user');
         $roleOptions = $this->roleRepository->options();
 
@@ -104,6 +110,8 @@ class AdminUserController extends Controller
      */
     public function update(AdminUserRequest $request, AdminUser $adminUser)
     {
+        $this->authorize('admin-admin-user-update');
+
         $adminUser->update($request->all());
 
         return redirect()->route('admin.admin-user.index')
@@ -117,6 +125,8 @@ class AdminUserController extends Controller
      */
     public function destroy(AdminUser $adminUser)
     {
+        $this->authorize('admin-admin-user-destroy');
+
         $adminUser->delete();
 
         return response()->json([
@@ -132,6 +142,8 @@ class AdminUserController extends Controller
      */
     public function upload(AdminUserImageRequest $request)
     {
+        $this->authorize('admin-admin-user-update');
+
         $image = $request->file('image_file');
         $path = $image->store('uploads/users', 'public');
 
