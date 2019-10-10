@@ -5,7 +5,6 @@ namespace AvoRed\Framework\Tests\Controllers;
 use AvoRed\Framework\Tests\BaseTestCase;
 use AvoRed\Framework\Database\Models\Role;
 use AvoRed\Framework\Database\Models\AdminUser;
-use AvoRed\Framework\Database\Models\Permission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 
@@ -28,10 +27,8 @@ class AdminUserTest extends BaseTestCase
             ->actingAs($this->user, 'admin')
             ->get(route('admin.admin-user.index'))
             ->assertStatus(Response::HTTP_FORBIDDEN);
-        
-        $permission = new Permission(['name' => 'admin-admin-user-list']);
-        $this->user->role->permissions()->save($permission);
-        $this->user->load('role.permissions');
+
+        $this->createPermissionForUser($this->user, 'admin-admin-user-list');
         
         $this->actingAs($this->user, 'admin')
             ->get(route('admin.admin-user.index'))

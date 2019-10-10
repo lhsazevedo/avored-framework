@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Notification;
 use AvoRed\Framework\Database\Models\AdminUser;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Illuminate\Database\Eloquent\Factory as EloquentFactory;
+use AvoRed\Framework\Database\Models\Permission;
 
 abstract class BaseTestCase extends OrchestraTestCase
 {
@@ -122,5 +123,20 @@ abstract class BaseTestCase extends OrchestraTestCase
         }
 
         return $this;
+    }
+
+    /**
+     * Create and new permission for a given user.
+     * 
+     * @param AvoRed\Framework\Database\Models\AdminUser $user
+     * @param string $name
+     * 
+     * @return void
+     */
+    protected function createPermissionForUser(AdminUser $user, string $name)
+    {
+        $permission = new Permission(['name' => $name]);
+        $user->role->permissions()->save($permission);
+        $user->load('role.permissions');
     }
 }
